@@ -1,0 +1,170 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding-right: 20px; /* Add some space between main content and thumbnails */
+}
+
+.main-image {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+}
+
+.main-image:active {
+    cursor: grabbing;
+}
+
+.thumbnails-container {
+    width: 120px; /* Fixed width */
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid #ccc;
+    height: 100%;
+    overflow: hidden; /* Prevents scrolling of the entire container */
+    flex-shrink: 0; /* Prevent the thumbnails container from shrinking */
+    align-items: center;
+}
+
+#thumbnailContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: auto; /* Only the thumbnailContainer is scrollable */
+    height: 100%;
+}
+
+.thumbnail-container {
+    position: relative;
+    display: inline-block;
+    margin: 3px;
+}
+
+.thumbnail {
+    background-color: lightgray;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 3px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.thumbnail:hover {
+    background-color: #ddd;
+}
+
+.thumbnail.selected {
+    background-color: #007acc;
+    border: 2px solid #007acc;
+}
+
+/* Add styles for delete button */
+.delete-button {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    text-align: center;
+    z-index: 1;
+}
+
+.delete-button:hover {
+    background-color: rgba(255, 0, 0, 0.9);
+}
+
+.thumbnail-container:hover .delete-button {
+    display: block;
+}
+
+/* Style for the copy button */
+.copy-button {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.copy-button:hover {
+    background-color: #005f9e;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.image-controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.image-controls button {
+    background-color: #007acc;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.image-controls button:hover {
+    background-color: #005f9e;
+}
+
+/* Context Menu Styles */
+.context-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--vscode-editor-background, #1e1e1e);
+    border: 1px solid var(--vscode-editorWidget-border, #454545);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    border-radius: 3px;
+    z-index: 1000;
+    min-width: 150px;
+}
+
+.context-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--vscode-editor-foreground, #d4d4d4);
+    font-size: 13px;
+}
+
+.context-menu-item:hover {
+    background-color: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+
+.context-menu-item:active {
+    background-color: var(--vscode-list-activeSelectionBackground, #094771);
+}

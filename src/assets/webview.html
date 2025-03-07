@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SciViewer</title>
+    <link rel="stylesheet" href="${styleUri}">
+</head>
+<body>
+    <h3 id="noData">No plots found in the temporary directory.</h3>
+    <div id="mainContainer" class="main-container">
+        <img id="mainImage" class="main-image" src="${latestImageUri}">
+    </div>
+    <div id="thumbnailsContainer" class="thumbnails-container">
+        <h3>Thumbnails</h3>
+        <div id="thumbnailContainer">
+            ${thumbnails}
+        </div>
+    </div>
+    <button class="copy-button" id="copyButton">Copy One-liner</button>
+    <script src="${scriptUri}"></script>
+</body>
+</html>
