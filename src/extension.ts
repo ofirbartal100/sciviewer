@@ -55,20 +55,22 @@ function updateWebviewContent(panel: vscode.WebviewPanel) {
         const latestImageUri = panel.webview.asWebviewUri(vscode.Uri.file(files[0]));
         const thumbnailsUris = lastImages.map((file, index) => panel.webview.asWebviewUri(vscode.Uri.file(file)));
         const thumbnails = thumbnailsUris.map((uri, index) => {
-            return `<img id="thumbnail-${index}" src="${uri}" 
-                class="thumbnail" style="width: 80px; height: auto;" 
-                onclick="showImage('${uri}', ${index})">`;
+            return `
+                <div class="thumbnail-container">
+                    <img id="thumbnail-${index}" src="${uri}" 
+                        class="thumbnail" style="width: 80px; height: auto;" 
+                        onclick="showImage('${uri}', ${index})">
+                    <button class="delete-button" onclick="deleteImage(${index}, event)">×</button>
+                </div>`;
         }).join('');
 
         // Replace the placeholders in HTML with actual URIs
         htmlContent = htmlContent.replace('${latestImageUri}', latestImageUri.toString())
             .replace('${thumbnails}', thumbnails);
-
     }
         
     // Set the webview HTML
     panel.webview.html = htmlContent;
-    
 }
 
 function getSortedImages(dir: string): string[] {
@@ -167,6 +169,25 @@ export function handleWebviewMessages(panel: vscode.WebviewPanel) {
             } catch (error) {
                 console.error('Error downloading image:', error);
                 vscode.window.showErrorMessage('Failed to download image.');
+            }
+        }
+
+        // Handle image deletion
+        if (message.command === 'deleteImage') {
+            try {
+                const imageUri = message.imageUri;
+                const filePath = extractFilePathFromWebviewUri(imageUri);
+                
+                if (filePath) {
+                    fs.unlinkSync(filePath);
+                    // Update the webview to reflect the deletion
+                    updateWebviewContent(panel);
+                } else {
+                    vscode.window.showErrorMessage('Failed to extract image path from URI.');
+                }
+            } catch (error) {
+                console.error('Error deleting image:', error);
+                vscode.window.showErrorMessage('Failed to delete image.');
             }
         }
     });

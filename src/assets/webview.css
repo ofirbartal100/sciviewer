@@ -48,12 +48,16 @@ html, body {
     height: 100%;
 }
 
+.thumbnail-container {
+    position: relative;
+    margin: 3px;
+}
+
 .thumbnail {
     background-color: lightgray;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding: 3px;
-    margin: 3px;
     cursor: pointer;
     transition: background-color 0.1s ease;
 }
@@ -65,6 +69,33 @@ html, body {
 .thumbnail.selected {
     background-color: #007acc;
     border: 2px solid #007acc;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+.thumbnail-container:hover .delete-button {
+    display: block;
 }
 
 /* Style for the copy button */

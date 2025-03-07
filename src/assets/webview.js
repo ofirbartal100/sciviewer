@@ -131,7 +131,11 @@ window.addEventListener('message', event => {
         if (isThumbnailChanged) {
             document.getElementById('mainImage').src = firstNewThumbnailUri;
             const thumbnailsHtml = message.thumbnailsUris.map((uri, index) => { 
-                return `<img id="thumbnail-${index}" src="${uri}" class="thumbnail" style="width: 80px; height: auto;" onclick="showImage('${uri}', ${index})">`;
+                return `
+                    <div class="thumbnail-container">
+                        <img id="thumbnail-${index}" src="${uri}" class="thumbnail" style="width: 80px; height: auto;" onclick="showImage('${uri}', ${index})">
+                        <button class="delete-button" onclick="deleteImage(${index}, event)">×</button>
+                    </div>`;
             }).join('');
                 
             document.getElementById('thumbnailContainer').innerHTML = thumbnailsHtml;
@@ -339,5 +343,18 @@ function copyImagePath() {
     vscode.postMessage({ 
         command: 'copyImagePath',
         imageUrl: imageUrl
+    });
+}
+
+// Add delete image functionality
+function deleteImage(index, event) {
+    event.stopPropagation(); // Prevent the click from triggering the thumbnail selection
+    const thumbnail = document.getElementById(`thumbnail-${index}`);
+    const imageUri = thumbnail.src;
+    
+    // Send message to extension to handle the deletion
+    vscode.postMessage({ 
+        command: 'deleteImage',
+        imageUri: imageUri
     });
 }
