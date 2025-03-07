@@ -3,7 +3,7 @@
   "publisher": "Ofiri",
   "displayName": "SciViewer",
   "description": "Overrides the plt.show() function to solve the X11 forwording problem. and mimic natural behavior.",
-  "icon": "assets/images/icon.png",
+  "icon": "assets/icon.png",
   "version": "0.1.2",
   "engines": {
     "vscode": "^1.93.0"
