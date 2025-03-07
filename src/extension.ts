@@ -98,38 +98,6 @@ export function handleWebviewMessages(panel: vscode.WebviewPanel) {
             }
         }
 
-        // Handle deleting image
-        if (message.command === 'deleteImage') {
-            try {
-                const imageUrl = message.imageUrl;
-                const filePath = extractFilePathFromWebviewUri(imageUrl);
-                
-                if (filePath) {
-                    fs.unlinkSync(filePath);
-                    vscode.window.showInformationMessage('Image deleted successfully');
-                    // Trigger a refresh of the thumbnails
-                    const files = getSortedImages(tempDir);
-                    if (files.length > 0) {
-                        const lastImages = files.slice(0, 10);
-                        const thumbnailsUris = lastImages.map((file, index) => panel.webview.asWebviewUri(vscode.Uri.file(file)).toString());
-                        panel.webview.postMessage({
-                            command: 'updateThumbnails',
-                            thumbnailsUris: thumbnailsUris
-                        });
-                    } else {
-                        panel.webview.postMessage({
-                            command: 'clearThumbnails'
-                        });
-                    }
-                } else {
-                    vscode.window.showErrorMessage('Failed to extract image path from URI.');
-                }
-            } catch (error) {
-                console.error('Error deleting image:', error);
-                vscode.window.showErrorMessage('Failed to delete image.');
-            }
-        }
-
         // Handle the copy button click
         if (message.command === 'copyPythonContent') {
             // Generate a one-liner that imports the monkey_patch.py file using importlib

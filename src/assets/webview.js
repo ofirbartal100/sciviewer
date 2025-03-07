@@ -131,11 +131,7 @@ window.addEventListener('message', event => {
         if (isThumbnailChanged) {
             document.getElementById('mainImage').src = firstNewThumbnailUri;
             const thumbnailsHtml = message.thumbnailsUris.map((uri, index) => { 
-                return `
-                    <div class="thumbnail-container">
-                        <img id="thumbnail-${index}" src="${uri}" class="thumbnail" style="width: 80px; height: auto;" onclick="showImage('${uri}', ${index})">
-                        <button class="delete-button" onclick="deleteThumbnail(${index}); event.stopPropagation();">×</button>
-                    </div>`;
+                return `<img id="thumbnail-${index}" src="${uri}" class="thumbnail" style="width: 80px; height: auto;" onclick="showImage('${uri}', ${index})">`;
             }).join('');
                 
             document.getElementById('thumbnailContainer').innerHTML = thumbnailsHtml;
@@ -235,10 +231,38 @@ function setupContextMenu() {
     `;
     document.body.appendChild(contextMenu);
 
-    // Show context menu on right-click for main image
+    // Show context menu on right-click
     mainImage.addEventListener('contextmenu', (event) => {
         event.preventDefault();
-        showContextMenu(event, contextMenu);
+        
+        // Get the dimensions of the context menu and viewport
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Position the context menu at the mouse position
+        contextMenu.style.display = 'block';
+        
+        // Get the dimensions of the context menu
+        const menuWidth = contextMenu.offsetWidth;
+        const menuHeight = contextMenu.offsetHeight;
+        
+        // Calculate the position to ensure the menu stays within the viewport
+        let left = event.clientX;
+        let top = event.clientY;
+        
+        // Adjust if the menu would go off the right edge
+        if (left + menuWidth > viewportWidth) {
+            left = viewportWidth - menuWidth - 5;
+        }
+        
+        // Adjust if the menu would go off the bottom edge
+        if (top + menuHeight > viewportHeight) {
+            top = viewportHeight - menuHeight - 5;
+        }
+        
+        // Set the position
+        contextMenu.style.left = `${left}px`;
+        contextMenu.style.top = `${top}px`;
     });
 
     // Hide context menu when clicking elsewhere
@@ -258,38 +282,6 @@ function setupContextMenu() {
     document.getElementById('copyImagePath').addEventListener('click', () => {
         copyImagePath();
     });
-}
-
-// Function to show context menu
-function showContextMenu(event, menu) {
-    // Get the dimensions of the context menu and viewport
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Position the context menu at the mouse position
-    menu.style.display = 'block';
-    
-    // Get the dimensions of the context menu
-    const menuWidth = menu.offsetWidth;
-    const menuHeight = menu.offsetHeight;
-    
-    // Calculate the position to ensure the menu stays within the viewport
-    let left = event.clientX;
-    let top = event.clientY;
-    
-    // Adjust if the menu would go off the right edge
-    if (left + menuWidth > viewportWidth) {
-        left = viewportWidth - menuWidth - 5;
-    }
-    
-    // Adjust if the menu would go off the bottom edge
-    if (top + menuHeight > viewportHeight) {
-        top = viewportHeight - menuHeight - 5;
-    }
-    
-    // Set the position
-    menu.style.left = `${left}px`;
-    menu.style.top = `${top}px`;
 }
 
 // Function to copy image to clipboard
@@ -348,16 +340,4 @@ function copyImagePath() {
         command: 'copyImagePath',
         imageUrl: imageUrl
     });
-}
-
-// Function to delete thumbnail
-function deleteThumbnail(index) {
-    const thumbnail = document.getElementById(`thumbnail-${index}`);
-    if (thumbnail) {
-        const imageUrl = thumbnail.src;
-        vscode.postMessage({
-            command: 'deleteImage',
-            imageUrl: imageUrl
-        });
-    }
 }
