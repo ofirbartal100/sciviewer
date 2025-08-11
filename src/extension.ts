@@ -3,34 +3,140 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as childProcess from 'child_process';
+import { AutoInjectionManager } from './autoInjection';
+
+// Constants for better maintainability
+const TEMP_DIR_NAME = 'sciviewer';
+const WEBVIEW_PANEL_TYPE = 'sciViewer';
 
 // Get the system's temporary directory
-const tempDir = path.join(os.tmpdir(), 'sciviewer');
+const tempDir = path.join(os.tmpdir(), TEMP_DIR_NAME);
 
 // Ensure the directory exists (you can create it if it doesn't exist)
 if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
+    fs.mkdirSync(tempDir, { recursive: true });
 }
 
 const monkeyPatchPath = path.join(__dirname, 'assets/monkey_patch.py');
 
-export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('sciviewer.open', async () => {
-        const panel = vscode.window.createWebviewPanel(
-            'sciViewer',
-            'SciViewer',
-            vscode.ViewColumn.Beside,
-            {
-                enableScripts: true,
-				localResourceRoots: [vscode.Uri.file(tempDir), vscode.Uri.file(path.join(__dirname, 'assets'))]
-            }
-        );
+// Global instances
+let autoInjectionManager: AutoInjectionManager | null = null;
+let currentWebviewPanel: vscode.WebviewPanel | null = null;
 
-        updateWebviewContent(panel);
-        handleWebviewMessages(panel);
+export function activate(context: vscode.ExtensionContext) {
+    console.log('🚀 SciViewer extension is now active!');
+
+    // Initialize auto-injection manager
+    autoInjectionManager = new AutoInjectionManager(context);
+    context.subscriptions.push(autoInjectionManager);
+
+    // Register commands
+    registerCommands(context);
+
+    // Show welcome message on first install
+    showWelcomeMessage(context);
+}
+
+function registerCommands(context: vscode.ExtensionContext) {
+    // Original command to open SciViewer
+    const openCommand = vscode.commands.registerCommand('sciviewer.open', async () => {
+        await openSciViewerPanel();
     });
 
-    context.subscriptions.push(disposable);
+    // Auto-injection commands
+    const toggleAutoInjectionCommand = vscode.commands.registerCommand('sciviewer.toggleAutoInjection', async () => {
+        if (autoInjectionManager) {
+            await autoInjectionManager.toggleAutoInjection();
+        }
+    });
+
+    const injectNowCommand = vscode.commands.registerCommand('sciviewer.injectNow', async () => {
+        if (autoInjectionManager) {
+            await autoInjectionManager.injectIntoCurrentEnvironment();
+        }
+    });
+
+    const showStatusCommand = vscode.commands.registerCommand('sciviewer.showStatus', () => {
+        if (autoInjectionManager) {
+            autoInjectionManager.showStatus();
+        }
+    });
+
+    // Register all commands
+    context.subscriptions.push(
+        openCommand,
+        toggleAutoInjectionCommand,
+        injectNowCommand,
+        showStatusCommand
+    );
+}
+
+async function openSciViewerPanel(): Promise<vscode.WebviewPanel> {
+    // If panel already exists, show it
+    if (currentWebviewPanel) {
+        currentWebviewPanel.reveal(vscode.ViewColumn.Beside);
+        updateWebviewContent(currentWebviewPanel);
+        return currentWebviewPanel;
+    }
+
+    // Create new panel
+    const panel = vscode.window.createWebviewPanel(
+        WEBVIEW_PANEL_TYPE,
+        'SciViewer',
+        vscode.ViewColumn.Beside,
+        {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            localResourceRoots: [
+                vscode.Uri.file(tempDir), 
+                vscode.Uri.file(path.join(__dirname, 'assets'))
+            ]
+        }
+    );
+
+    // Set the panel icon
+    panel.iconPath = vscode.Uri.file(path.join(__dirname, '../icon.png'));
+
+    // Store reference to current panel
+    currentWebviewPanel = panel;
+
+    // Handle panel disposal
+    panel.onDidDispose(() => {
+        currentWebviewPanel = null;
+    }, null);
+
+    // Initialize panel content and message handling
+    updateWebviewContent(panel);
+    handleWebviewMessages(panel);
+
+    return panel;
+}
+
+function showWelcomeMessage(context: vscode.ExtensionContext) {
+    const hasShownWelcome = context.globalState.get('sciviewer.hasShownWelcome', false);
+    
+    if (!hasShownWelcome) {
+        vscode.window.showInformationMessage(
+            '🎉 Welcome to SciViewer! Auto-injection is enabled by default. Your matplotlib plots will now appear seamlessly in VS Code.',
+            'Open SciViewer',
+            'Learn More',
+            'Settings'
+        ).then(selection => {
+            switch (selection) {
+                case 'Open SciViewer':
+                    vscode.commands.executeCommand('sciviewer.open');
+                    break;
+                case 'Learn More':
+                    vscode.env.openExternal(vscode.Uri.parse('https://github.com/your-repo/sciviewer'));
+                    break;
+                case 'Settings':
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'sciviewer');
+                    break;
+            }
+        });
+
+        context.globalState.update('sciviewer.hasShownWelcome', true);
+    }
 }
 
 function updateWebviewContent(panel: vscode.WebviewPanel) {

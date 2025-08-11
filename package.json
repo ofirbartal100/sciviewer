@@ -2,23 +2,71 @@
   "name": "sciviewer",
   "publisher": "Ofiri",
   "displayName": "SciViewer",
-  "description": "Overrides the plt.show() function to solve the X11 forwording problem. and mimic natural behavior.",
-  "icon": "assets/icon.png",
-  "version": "0.1.2",
+  "description": "🔬 Seamless Python plot visualization with zero-setup auto-injection. Automatically captures matplotlib plots in VS Code, eliminating X11 forwarding issues for remote development.",
+  "icon": "icon.png",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.93.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
         {
             "command": "sciviewer.open",
             "title": "Open SciViewer"
+        },
+        {
+            "command": "sciviewer.toggleAutoInjection",
+            "title": "SciViewer: Toggle Auto-Injection"
+        },
+        {
+            "command": "sciviewer.injectNow",
+            "title": "SciViewer: Inject Into Current Python Session"
+        },
+        {
+            "command": "sciviewer.showStatus",
+            "title": "SciViewer: Show Injection Status"
         }
+    ],
+    "configuration": {
+      "title": "SciViewer",
+      "properties": {
+        "sciviewer.autoInject": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically inject SciViewer patch when Python files are opened or executed"
+        },
+        "sciviewer.autoOpenPanel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically open SciViewer panel when first plot is detected"
+        },
+        "sciviewer.detectJupyter": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically detect and patch Jupyter notebook kernels"
+        },
+        "sciviewer.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show SciViewer status in the status bar"
+        },
+        "sciviewer.injectionMethod": {
+          "type": "string",
+          "enum": ["automatic", "manual", "smart"],
+          "default": "smart",
+          "description": "How to inject the monkey patch: automatic (always), manual (never), smart (context-aware)"
+        }
+      }
+    },
+    "activationEvents": [
+      "onLanguage:python",
+      "onLanguage:jupyter",
+      "onStartupFinished"
     ]
   },
   "scripts": {
