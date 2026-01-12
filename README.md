@@ -176,7 +176,7 @@ We love contributions! Here's how to get started:
 
 ### Development Setup
 ```bash
-git clone https://github.com/your-repo/sciviewer
+git clone https://github.com/ofirbartal100/sciviewer
 cd sciviewer
 npm install
 npm run compile

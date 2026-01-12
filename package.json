@@ -2,35 +2,59 @@
   "name": "sciviewer",
   "publisher": "Ofiri",
   "displayName": "SciViewer",
-  "description": "🔬 Seamless Python plot visualization with zero-setup auto-injection. Automatically captures matplotlib plots in VS Code, eliminating X11 forwarding issues for remote development.",
+  "description": "Seamless Python plot visualization with zero-setup auto-injection. Automatically captures matplotlib plots in VS Code, eliminating X11 forwarding issues for remote development.",
   "icon": "icon.png",
   "version": "0.2.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ofirbartal100/sciviewer"
+  },
+  "homepage": "https://github.com/ofirbartal100/sciviewer#readme",
+  "bugs": {
+    "url": "https://github.com/ofirbartal100/sciviewer/issues"
+  },
+  "keywords": [
+    "python",
+    "matplotlib",
+    "plot",
+    "visualization",
+    "data science",
+    "remote development",
+    "jupyter",
+    "scientific"
+  ],
   "engines": {
     "vscode": "^1.93.0"
   },
   "categories": [
+    "Visualization",
+    "Data Science",
     "Other"
   ],
-
+  "galleryBanner": {
+    "color": "#1e3a5f",
+    "theme": "dark"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-        {
-            "command": "sciviewer.open",
-            "title": "Open SciViewer"
-        },
-        {
-            "command": "sciviewer.toggleAutoInjection",
-            "title": "SciViewer: Toggle Auto-Injection"
-        },
-        {
-            "command": "sciviewer.injectNow",
-            "title": "SciViewer: Inject Into Current Python Session"
-        },
-        {
-            "command": "sciviewer.showStatus",
-            "title": "SciViewer: Show Injection Status"
-        }
+      {
+        "command": "sciviewer.open",
+        "title": "Open SciViewer"
+      },
+      {
+        "command": "sciviewer.toggleAutoInjection",
+        "title": "SciViewer: Toggle Auto-Injection"
+      },
+      {
+        "command": "sciviewer.injectNow",
+        "title": "SciViewer: Inject Into Current Python Session"
+      },
+      {
+        "command": "sciviewer.showStatus",
+        "title": "SciViewer: Show Injection Status"
+      }
     ],
     "configuration": {
       "title": "SciViewer",

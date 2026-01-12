@@ -7,17 +7,67 @@
     <link rel="stylesheet" href="${styleUri}">
 </head>
 <body>
-    <h3 id="noData">No plots found in the temporary directory.</h3>
-    <div id="mainContainer" class="main-container">
-        <img id="mainImage" class="main-image" src="${latestImageUri}">
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state">
+        <div class="empty-state-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18"/>
+                <path d="M18 9l-5 5-4-3-3 4"/>
+            </svg>
+        </div>
+        <h3 class="empty-state-title">No plots yet</h3>
+        <p class="empty-state-description">
+            Run your Python code with matplotlib. Your plots will appear here automatically.
+        </p>
     </div>
-    <div id="thumbnailsContainer" class="thumbnails-container">
-        <h3>Thumbnails</h3>
+    
+    <!-- Main Content -->
+    <div id="mainContainer" class="main-container hidden">
+        <div class="zoom-indicator" id="zoomIndicator">100%</div>
+        <img id="mainImage" class="main-image" src="${latestImageUri}" alt="Plot">
+        
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-btn" id="zoomOutBtn" title="Zoom Out (-)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35M8 11h6"/>
+                </svg>
+            </button>
+            <button class="toolbar-btn" id="zoomResetBtn" title="Reset Zoom (0)">
+                <span id="zoomLevelText">100%</span>
+            </button>
+            <button class="toolbar-btn" id="zoomInBtn" title="Zoom In (+)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/>
+                </svg>
+            </button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" id="downloadBtn" title="Download Image">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                <span>Download</span>
+            </button>
+            <button class="toolbar-btn" id="copyBtn" title="Copy to Clipboard">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                </svg>
+                <span>Copy</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Thumbnails Sidebar -->
+    <div id="thumbnailsContainer" class="thumbnails-container hidden">
+        <div class="thumbnails-header">Recent Plots</div>
         <div id="thumbnailContainer">
             ${thumbnails}
         </div>
     </div>
-    <button class="copy-button" id="copyButton">Copy One-liner</button>
+    
     <script src="${scriptUri}"></script>
 </body>
 </html>

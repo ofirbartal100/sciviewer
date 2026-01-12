@@ -127,7 +127,7 @@ function showWelcomeMessage(context: vscode.ExtensionContext) {
                     vscode.commands.executeCommand('sciviewer.open');
                     break;
                 case 'Learn More':
-                    vscode.env.openExternal(vscode.Uri.parse('https://github.com/your-repo/sciviewer'));
+                    vscode.env.openExternal(vscode.Uri.parse('https://github.com/ofirbartal100/sciviewer'));
                     break;
                 case 'Settings':
                     vscode.commands.executeCommand('workbench.action.openSettings', 'sciviewer');
@@ -164,9 +164,10 @@ function updateWebviewContent(panel: vscode.WebviewPanel) {
             return `
                 <div class="thumbnail-container">
                     <img id="thumbnail-${index}" src="${uri}" 
-                        class="thumbnail" style="width: 80px; height: auto;" 
-                        onclick="showImage('${uri}', ${index})">
-                    <button class="delete-button" onclick="deleteImage(${index}, event)">×</button>
+                        class="thumbnail" 
+                        onclick="showImage('${uri}', ${index})"
+                        alt="Plot ${index + 1}">
+                    <button class="delete-button" onclick="deleteImage(${index}, event)" aria-label="Delete plot">×</button>
                 </div>`;
         }).join('');
 
