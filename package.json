@@ -86,13 +86,13 @@
           "description": "How to inject the monkey patch: automatic (always), manual (never), smart (context-aware)"
         }
       }
-    },
-    "activationEvents": [
-      "onLanguage:python",
-      "onLanguage:jupyter",
-      "onStartupFinished"
-    ]
+    }
   },
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:jupyter",
+    "onStartupFinished"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./ && cp -r src/assets out",

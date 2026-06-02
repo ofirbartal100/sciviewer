@@ -1,230 +1,119 @@
-# 🔬 SciViewer - Seamless Python Plot Visualization
+# 🔬 SciViewer — Seamless Python Plot Visualization in VS Code
 
-**The ultimate VS Code extension for researchers and data scientists working with remote Python environments.**
+**Capture matplotlib plots automatically and view them inside VS Code — no X11 forwarding, no `savefig` boilerplate, no broken GUI backends over SSH.**
 
-SciViewer automatically captures your matplotlib plots and displays them beautifully within VS Code, eliminating X11 forwarding headaches and making remote development a breeze! 🚀
+SciViewer intercepts your `plt.show()` calls, saves each figure, and displays it in a live panel right inside the editor. It's built for researchers and data scientists working in remote Python environments where opening a plot window is painful or impossible.
 
-## ✨ Key Features
+<!-- DEMO GIF: drop a recording here once available, e.g. media/demo.gif -->
+<!-- ![SciViewer demo](media/demo.gif) -->
+> 📽️ _Demo GIF coming soon — see [How It Works](#-how-it-works) below._
 
-### 🔄 **Zero-Setup Auto-Injection**
-- **Automatic detection**: Opens Python files? ✅ Plots auto-captured
-- **Smart environment detection**: Works with virtual environments, conda, Jupyter
-- **Context-aware**: Only activates when matplotlib is used
-- **No manual setup**: Install extension → Open Python file → Start plotting!
+## ✨ Features
 
-### 📊 **Enhanced Plot Management**
-- **Live preview**: Plots appear instantly as you create them
-- **Rich metadata**: Tracks script context, execution time, plot details
-- **Smart cleanup**: Automatically manages plot history (max 100 plots)
-- **Thumbnail gallery**: Quick access to recent plots
-- **Zoom & pan**: Full interactivity for detailed inspection
-
-### ⚙️ **Intelligent Configuration**
-- **Auto-injection modes**: Automatic, Manual, or Smart (context-aware)
-- **Jupyter integration**: Seamless notebook support
-- **Status indicators**: Real-time injection status in status bar
-- **Customizable behavior**: Auto-open panel, cleanup settings, and more
-
-### 🎯 **Research-Focused**
-- **Multi-format support**: PNG with high DPI, publication-ready quality
-- **Execution context**: Tracks which script/function generated each plot
-- **Cross-platform**: Works on Windows, macOS, and Linux
-- **Performance optimized**: Minimal overhead, maximum productivity
+- **Zero-setup auto-injection** — open a Python file, run it, and plots are captured automatically. No code changes.
+- **Live plot panel** — figures appear in a VS Code panel as soon as `plt.show()` runs.
+- **Thumbnail gallery** — browse recent plots; zoom and pan for detailed inspection.
+- **Rich metadata** — each plot records its source script, function, line number, figure size, DPI, and axes info.
+- **Jupyter-aware** — detects and patches notebook kernels alongside scripts.
+- **Automatic cleanup** — keeps the most recent 100 plots, removes older ones.
+- **Status bar integration** — shows whether injection is active and how many sessions are patched.
+- **Cross-platform** — Windows, macOS, Linux.
 
 ## 🚀 Quick Start
 
-### 1. Install the Extension
-```bash
-# From VS Code Marketplace
-# Search for "SciViewer" and click Install
-```
+1. Install **SciViewer** from the VS Code Marketplace (or search "SciViewer" in the Extensions view).
+2. Open any Python file that uses matplotlib.
+3. Run it. Your plots appear in the SciViewer panel automatically.
 
-### 2. Open Any Python File
 ```python
-# demo_plot.py
 import matplotlib.pyplot as plt
 import numpy as np
 
 x = np.linspace(0, 10, 100)
-y = np.sin(x)
-
-plt.plot(x, y)
-plt.title("My First Auto-Captured Plot!")
-plt.show()  # 🎉 Automatically appears in SciViewer!
+plt.plot(x, np.sin(x))
+plt.title("Auto-captured by SciViewer")
+plt.show()   # → appears in the SciViewer panel
 ```
 
-### 3. Watch the Magic Happen
-- SciViewer panel opens automatically
-- Your plot appears instantly
-- No configuration needed!
+No `%matplotlib` magic, no backend configuration, no manual `savefig`.
 
-## 📖 Usage Examples
+## 🔧 How It Works
 
-### Basic Plotting
-```python
-import matplotlib.pyplot as plt
-import numpy as np
+SciViewer injects a small Python patch (`monkey_patch.py`) into your active Python session. The patch replaces `matplotlib.pyplot.show()` and `Figure.show()` so that, instead of opening a GUI window, each figure is:
 
-# Create data
-x = np.linspace(0, 2*np.pi, 100)
-y = np.sin(x)
+1. Saved as a high-quality PNG (150 DPI) to a temp folder (`$TMPDIR/sciviewer`).
+2. Recorded with metadata (source location, figure properties, timestamp).
 
-# Plot (automatically captured!)
-plt.figure(figsize=(10, 6))
-plt.plot(x, y, linewidth=2)
-plt.title("Sine Wave - Auto-captured by SciViewer")
-plt.show()  # ✨ Magic happens here
-```
+The extension watches that folder and renders new plots in its panel. Because the capture happens at the matplotlib level, it works the same locally, over SSH Remote, in containers, and in Codespaces — anywhere your Python runs.
 
-### Multiple Subplots
-```python
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-ax1.plot(x, np.sin(x), 'r-', label='sin(x)')
-ax1.legend()
-
-ax2.plot(x, np.cos(x), 'b-', label='cos(x)')
-ax2.legend()
-
-plt.show()  # Both subplots captured together
-```
-
-### Jupyter Notebooks
-```python
-# In Jupyter cells - works automatically!
-%matplotlib inline  # Optional, SciViewer works regardless
-
-plt.scatter(data_x, data_y, alpha=0.6)
-plt.title("Scatter Plot from Jupyter")
-plt.show()  # Appears in both notebook AND SciViewer
-```
+> **Note:** the patch overrides `plt.show()` for the patched session, so plots are routed to SciViewer rather than a native window. Originals are stored so behavior can be restored.
 
 ## ⚙️ Configuration
 
-Access settings via `Ctrl+,` and search for "SciViewer":
+Open settings (`Ctrl+,`) and search for "SciViewer":
 
-```json
-{
-  "sciviewer.autoInject": true,          // Enable auto-injection
-  "sciviewer.autoOpenPanel": true,       // Auto-open panel on first plot
-  "sciviewer.detectJupyter": true,       // Detect Jupyter notebooks
-  "sciviewer.showStatusBar": true,       // Show status in status bar
-  "sciviewer.injectionMethod": "smart"   // auto|manual|smart
-}
-```
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `sciviewer.autoInject` | `true` | Auto-inject the patch when Python files are opened/run |
+| `sciviewer.autoOpenPanel` | `true` | Open the panel automatically on the first plot |
+| `sciviewer.detectJupyter` | `true` | Detect and patch Jupyter kernels |
+| `sciviewer.showStatusBar` | `true` | Show injection status in the status bar |
+| `sciviewer.injectionMethod` | `smart` | `automatic` (always), `manual` (never), or `smart` (context-aware) |
 
 ## 🎮 Commands
 
-| Command | Description | Shortcut |
-|---------|-------------|----------|
-| `SciViewer: Open` | Open the SciViewer panel | `Ctrl+Shift+P` |
-| `SciViewer: Toggle Auto-Injection` | Enable/disable auto-injection | |
-| `SciViewer: Inject Into Current Session` | Manually inject into active Python | |
-| `SciViewer: Show Status` | View injection status | |
+Run via the Command Palette (`Ctrl+Shift+P`):
 
-## 🔧 Advanced Features
+| Command | Description |
+|---------|-------------|
+| `Open SciViewer` | Open the plot panel |
+| `SciViewer: Toggle Auto-Injection` | Enable/disable auto-injection |
+| `SciViewer: Inject Into Current Python Session` | Manually inject the patch |
+| `SciViewer: Show Injection Status` | View current injection status |
 
-### Status Bar Integration
-The status bar shows real-time injection status:
-- 🔍 **Monitoring**: Watching for Python activity
-- ✅ **Active (N)**: Injected into N environments  
-- ⚠️ **Disabled**: Auto-injection turned off
+## 📋 Requirements
 
-### Smart Environment Detection
-SciViewer automatically detects:
-- Virtual environments (`venv`, `conda`, `pipenv`)
-- Jupyter notebook kernels
-- Debug sessions
-- Interactive Python sessions
-- Script executions
-
-### Plot Metadata
-Every plot includes rich metadata:
-- Execution context (script, function, line number)
-- Figure properties (size, DPI, axes info)
-- Timestamp and file size
-- Jupyter cell information (if applicable)
+- VS Code `1.93.0` or newer
+- Python with `matplotlib` installed (`pip install matplotlib`)
 
 ## 🐛 Troubleshooting
 
-### Plots Not Appearing?
-1. Check status bar for injection status
-2. Verify matplotlib is installed: `pip install matplotlib`
-3. Try manual injection: `Ctrl+Shift+P` → "SciViewer: Inject Into Current Session"
-4. Check extension settings: `Ctrl+,` → search "sciviewer"
+**Plots not appearing?**
+1. Check the status bar for injection status.
+2. Confirm matplotlib is installed: `pip install matplotlib`.
+3. Trigger manual injection: `Ctrl+Shift+P` → *SciViewer: Inject Into Current Python Session*.
+4. Review settings: `Ctrl+,` → search "sciviewer".
 
-### Performance Issues?
-- Plots are cleaned up automatically (max 100 stored)
-- Disable auto-open if not needed: `sciviewer.autoOpenPanel: false`
-- Use "manual" injection mode for specific workflows
+**Using remote development?** SciViewer works with VS Code Remote SSH, GitHub Codespaces, Docker containers, and WSL — the capture runs wherever Python runs.
 
-### Remote Development?
-SciViewer works perfectly with:
-- VS Code Remote SSH
-- GitHub Codespaces  
-- Docker containers
-- WSL (Windows Subsystem for Linux)
+## 🗺️ Roadmap
+
+- Multi-library support (Seaborn, Plotly, Bokeh)
+- Group plots by experiment/run
+- Export helpers (figure numbering, LaTeX)
+- Restore-to-native-window toggle
 
 ## 🤝 Contributing
 
-We love contributions! Here's how to get started:
+Contributions welcome.
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make your changes** and add tests
-4. **Submit a pull request**
-
-### Development Setup
 ```bash
 git clone https://github.com/ofirbartal100/sciviewer
 cd sciviewer
 npm install
 npm run compile
-# Press F5 in VS Code to launch development instance
+# Press F5 in VS Code to launch a development instance
 ```
 
-## 📊 Usage Statistics
-
-- 📈 **Plot Detection**: 99.9% accuracy with matplotlib
-- ⚡ **Performance**: <50ms injection overhead
-- 🔧 **Compatibility**: Python 3.6+ and matplotlib 2.0+
-- 🌍 **Cross-platform**: Windows, macOS, Linux
-
-## 🎯 Roadmap
-
-- [ ] **Multi-library support**: Seaborn, Plotly, Bokeh auto-detection
-- [ ] **Plot collections**: Group related plots by experiment
-- [ ] **Export features**: LaTeX integration, figure numbering
-- [ ] **Collaboration**: Share plot collections with team
-- [ ] **AI features**: Smart plot suggestions and optimization
-
-## 📝 Changelog
-
-### v0.2.0 - Auto-Injection Revolution
-- ✨ **NEW**: Zero-setup auto-injection system
-- ✨ **NEW**: Smart environment detection
-- ✨ **NEW**: Rich plot metadata tracking
-- ✨ **NEW**: Status bar integration
-- ✨ **NEW**: Enhanced configuration options
-- 🔧 **IMPROVED**: Higher quality plot saving (150 DPI)
-- 🔧 **IMPROVED**: Better error handling and user feedback
-- 🐛 **FIXED**: Memory leaks and performance issues
-
-### v0.1.2
-- First stable release
-- Basic plot capture functionality
+1. Fork the repo
+2. Create a feature branch
+3. Make your changes
+4. Open a pull request
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
-
-## 🙏 Acknowledgments
-
-Special thanks to the research community for feedback and the matplotlib team for their excellent library.
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-**Made with ❤️ for researchers, data scientists, and Python enthusiasts worldwide!**
-
-*"From SSH hell to plot heaven in 30 seconds" - Satisfied Researcher*
-
+*Built for researchers and data scientists who live in remote Python environments.*
