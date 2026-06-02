@@ -78,7 +78,37 @@ html, body {
     color: var(--sci-text-muted);
     max-width: 320px;
     line-height: 1.6;
-    margin: 0;
+    margin: 0 0 24px 0;
+}
+
+.empty-state-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--sci-accent);
+    color: var(--sci-text-inverse);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    font-family: inherit;
+}
+
+.empty-state-btn:hover {
+    background: var(--sci-accent-hover);
+    transform: translateY(-1px);
+}
+
+.empty-state-btn:active {
+    transform: translateY(0);
+}
+
+.empty-state-btn svg {
+    flex-shrink: 0;
 }
 
 /* Main Container */

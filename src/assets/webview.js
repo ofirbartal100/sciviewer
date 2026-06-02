@@ -107,6 +107,22 @@ function setupToolbarButtons() {
     if (elements.copyBtn) {
         elements.copyBtn.addEventListener('click', copyImageToClipboard);
     }
+    
+    // Copy One-liner button for manual injection (in toolbar)
+    const copyOneLinerBtn = document.getElementById('copyOneLinerBtn');
+    if (copyOneLinerBtn) {
+        copyOneLinerBtn.addEventListener('click', copyPythonOneLiner);
+    }
+    
+    // Copy One-liner button in empty state
+    const emptyStateCopyOneLinerBtn = document.getElementById('emptyStateCopyOneLinerBtn');
+    if (emptyStateCopyOneLinerBtn) {
+        emptyStateCopyOneLinerBtn.addEventListener('click', copyPythonOneLiner);
+    }
+}
+
+function copyPythonOneLiner() {
+    vscode.postMessage({ command: 'copyPythonContent' });
 }
 
 function handleKeyDown(event) {
