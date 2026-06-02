@@ -4,9 +4,7 @@
 
 SciViewer intercepts your `plt.show()` calls, saves each figure, and displays it in a live panel right inside the editor. It's built for researchers and data scientists working in remote Python environments where opening a plot window is painful or impossible.
 
-<!-- DEMO GIF: drop a recording here once available, e.g. media/demo.gif -->
-<!-- ![SciViewer demo](media/demo.gif) -->
-> 📽️ _Demo GIF coming soon — see [How It Works](#-how-it-works) below._
+![SciViewer demo](media/demo.gif)
 
 ## ✨ Features
 
