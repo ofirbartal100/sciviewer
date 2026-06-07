@@ -1,7 +1,7 @@
 {
   "name": "sciviewer",
   "publisher": "OfirBarTal",
-  "displayName": "SciViewer",
+  "displayName": "SciViewer Remote Plots",
   "description": "Seamless Python plot visualization with zero-setup auto-injection. Automatically captures matplotlib plots in VS Code, eliminating X11 forwarding issues for remote development.",
   "icon": "icon.png",
   "version": "0.2.0",
