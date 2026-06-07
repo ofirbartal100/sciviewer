@@ -4,7 +4,7 @@
   "displayName": "SciViewer Remote Plots",
   "description": "Seamless Python plot visualization with zero-setup auto-injection. Automatically captures matplotlib plots in VS Code, eliminating X11 forwarding issues for remote development.",
   "icon": "icon.png",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -81,7 +81,11 @@
         },
         "sciviewer.injectionMethod": {
           "type": "string",
-          "enum": ["automatic", "manual", "smart"],
+          "enum": [
+            "automatic",
+            "manual",
+            "smart"
+          ],
           "default": "smart",
           "description": "How to inject the monkey patch: automatic (always), manual (never), smart (context-aware)"
         }
