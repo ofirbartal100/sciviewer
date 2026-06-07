@@ -1,6 +1,6 @@
 {
   "name": "sciviewer",
-  "publisher": "Ofiri",
+  "publisher": "OfirBarTal",
   "displayName": "SciViewer",
   "description": "Seamless Python plot visualization with zero-setup auto-injection. Automatically captures matplotlib plots in VS Code, eliminating X11 forwarding issues for remote development.",
   "icon": "icon.png",
